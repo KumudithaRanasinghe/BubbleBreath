@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -24,35 +25,29 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final UsersRepository usersRepository;
-    private final JwtService jwtService; // Assuming you have an interface/class named JwtService
-
+    private final JwtService jwtService;
 
     public SecurityConfig(UsersRepository usersRepository, JwtService jwtService) {
         this.usersRepository = usersRepository;
         this.jwtService = jwtService;
     }
 
-    // UserDetailsService Bean: How to load a user by name (principal)
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> {
-            // Use the method that fetches roles eagerly for authentication
-            return usersRepository.findByUsernameWithRoles(username)
-                    .map(UserDetailsImpl::new)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-        };
+        return email -> usersRepository.findByEmailWithRoles(email)
+                .map(UserDetailsImpl::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 
-    // PasswordEncoder Bean: Mandatory for password comparison
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // AuthenticationProvider Bean: Combines UserDetailsService and PasswordEncoder
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -61,56 +56,55 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // AuthenticationManager Bean: Handles the overall authentication process
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         JwtAuthenticationFilter jwtAuthFilter = new JwtAuthenticationFilter(jwtService, userDetailsService());
 
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(configurer ->
-                        configurer.configurationSource(request -> {
-                            CorsConfiguration configuration = new CorsConfiguration();
-                            configuration.setAllowedOriginPatterns(List.of("*"));
-                            configuration.setMaxAge(3600L);
-                            configuration.setExposedHeaders(List.of("Authorization"));
-                            configuration.setAllowedMethods(List.of("*"));
-                            configuration.setAllowCredentials(true);
-                            configuration.setAllowedHeaders(List.of("*"));
-                            return configuration;
-                        }))
+                .cors(configurer -> configurer.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOriginPatterns(List.of("*"));
+                    configuration.setMaxAge(3600L);
+                    configuration.setExposedHeaders(List.of("Authorization"));
+                    configuration.setAllowedMethods(List.of("*"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setAllowedHeaders(List.of("*"));
+                    return configuration;
+                }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(
-
-                                        "/swagger-ui/**",
-                                        "/v3/api-docs/**"
-
-
-
-                                )
-                                .permitAll()
-                                .anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/auth/login",
+                                "/auth/refresh-token",
+                                "/auth/forgot-password"
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.getWriter().write(
+                                    "{\"status\":401,\"error\":\"Unauthorized\",\"message\":\"" + authException.getMessage() + "\"}"
+                            );
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            response.getWriter().write(
+                                    "{\"status\":403,\"error\":\"Forbidden\",\"message\":\"" + accessDeniedException.getMessage() + "\"}"
+                            );
+                        })
                 );
-
-        http.authenticationProvider(authenticationProvider());
-        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("Authentication failed: " + authException.getMessage());
-                })
-                .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                    response.getWriter().write("Access denied: " + accessDeniedException.getMessage());
-                })
-        );
 
         return http.build();
     }
