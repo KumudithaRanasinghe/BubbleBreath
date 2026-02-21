@@ -1,22 +1,15 @@
-package com.bubble_breath.admin_service.configuration;
+package com.bubble_breath.game_service.configuration;
 
-import com.bubble_breath.admin_service.repository.UsersRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -28,42 +21,12 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final UsersRepository usersRepository;
-    private final JwtService jwtService;
-
-    public SecurityConfig(UsersRepository usersRepository, JwtService jwtService) {
-        this.usersRepository = usersRepository;
-        this.jwtService = jwtService;
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return email -> usersRepository.findByEmailWithRoles(email)
-                .map(UserDetailsImpl::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
+    @Autowired
+    private JwtService jwtService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        JwtAuthenticationFilter jwtAuthFilter = new JwtAuthenticationFilter(jwtService, userDetailsService());
+        JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtService);
 
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(configurer -> configurer.configurationSource(request -> {
@@ -78,17 +41,18 @@ public class SecurityConfig {
                 }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/auth/login",
-                                "/auth/refresh-token",
-                                "/auth/forgot-password"
-                        ).permitAll()
+                        // Swagger - public
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // GET endpoints - public (no JWT needed)
+                        .requestMatchers(HttpMethod.GET, "/api/Game/**", "/api/Game",
+                                                        "/api/Category/**", "/api/Category").permitAll()
+                        // POST, PUT, DELETE - require JWT
+                        .requestMatchers(HttpMethod.POST, "/api/Game", "/api/Category").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/Game", "/api/Category").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/Game/**", "/api/Category/**").authenticated()
                         .anyRequest().authenticated()
                 )
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setContentType("application/json");
