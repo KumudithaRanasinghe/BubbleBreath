@@ -1,14 +1,17 @@
 spring:
   application:
-    name: admin_service
+    name: payment_service
+
   docker:
     compose:
       enabled: false
+
   datasource:
-    url: jdbc:mysql://localhost:3306/admin_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/payment_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
     username: kumuditha
     password: kumuditha1234
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,7 +22,7 @@ spring:
         format_sql: true
 
 server:
-  port: 8003
+  port: 8004
   servlet:
     context-path: /api
 
@@ -27,6 +30,3 @@ application:
   security:
     jwt:
       secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      expiration: 900000          # 15 minutes  (access token)
-      refresh-token:
-        expiration: 604800000     # 7 days      (refresh token)
