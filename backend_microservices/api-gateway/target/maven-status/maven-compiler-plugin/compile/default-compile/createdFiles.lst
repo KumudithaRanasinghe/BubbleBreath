@@ -1,0 +1,6 @@
+com/app/gateway/filter/LoggingFilter.class
+com/app/gateway/controller/FallbackController.class
+com/app/gateway/controller/RegistrationController.class
+com/app/gateway/controller/HealthController.class
+com/app/gateway/ApiGatewayApplication.class
+com/app/gateway/config/GatewayConfig.class

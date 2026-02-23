@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true                    # auto-discover new services from Eureka
+          lower-case-service-id: true      # use lowercase service names in URLs
+      default-filters:
+        - name: Retry
+          args:
+            retries: 3
+            statuses: BAD_GATEWAY, SERVICE_UNAVAILABLE
+            methods: GET
+            backoff:
+              firstBackoff: 100ms
+              maxBackoff: 500ms
+              factor: 2
+      httpclient:
+        connect-timeout: 5000             # 5s to establish connection
+        response-timeout: 10s             # 10s to get response
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders: "*"
+            maxAge: 3600
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${EUREKA_USERNAME:eureka}:${EUREKA_PASSWORD:eureka123}@${EUREKA_HOST:localhost}:8761/eureka/
+    registry-fetch-interval-seconds: 5    # check Eureka every 5 seconds
+    eureka-server-connect-timeout-seconds: 10
+  instance:
+    prefer-ip-address: true               # use IP not hostname for registration
+    ip-address: ${INSTANCE_IP:localhost}
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 30
+    metadata-map:
+      startup: ${random.int}             # force re-registration on restart
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, gateway, metrics
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true                      # exposes /actuator/gateway/routes
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10000
+        permittedNumberOfCallsInHalfOpenState: 3
+    instances:
+      circuitBreaker:
+        base-config: default
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG    # see routing decisions
+    com.app.gateway: DEBUG

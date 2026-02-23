@@ -1,0 +1,6 @@
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/ApiGatewayApplication.java
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/config/GatewayConfig.java
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/controller/RegistrationController.java
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/filter/LoggingFilter.java
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/controller/HealthController.java
+/home/kumuditha/Desktop/BubbleBreath/backend_microservices/api-gateway/src/main/java/com/app/gateway/controller/FallbackController.java

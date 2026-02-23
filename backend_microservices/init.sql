@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS game_service_db;
+CREATE DATABASE IF NOT EXISTS reward_service_db;
+CREATE DATABASE IF NOT EXISTS challenge_service_db;
+CREATE DATABASE IF NOT EXISTS achievment_service_db;
+CREATE DATABASE IF NOT EXISTS admin_service_db;
+CREATE DATABASE IF NOT EXISTS payment_service_db;
+CREATE DATABASE IF NOT EXISTS review_service_db;
+CREATE DATABASE IF NOT EXISTS user_privileges_db;
