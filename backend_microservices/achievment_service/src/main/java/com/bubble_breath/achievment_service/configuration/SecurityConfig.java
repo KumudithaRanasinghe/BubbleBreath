@@ -42,14 +42,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Swagger - public
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/actuator/**").permitAll()
                         // GET endpoints - public (no JWT needed)
-                        .requestMatchers(HttpMethod.GET, "/api/Achievment/**", "/api/Achievment",
-                                                        "").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/Achievment/**", "/api/Achievment").permitAll()
                         // POST, PUT, DELETE - require JWT
-                        .requestMatchers(HttpMethod.POST, "/api/Achievment", "").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/Achievment", "").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/Achievment/**", "/api/Category/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/Achievment").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/Achievment").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/Achievment/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

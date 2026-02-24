@@ -4,6 +4,15 @@ server:
 spring:
   application:
     name: ACHIEVMENT-SERVICE
+  datasource:
+    url: jdbc:mysql://localhost:3306/achievment_service_db?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
 
 eureka:
   client:
@@ -25,3 +34,8 @@ management:
   endpoint:
     health:
       show-details: always
+
+application:
+  security:
+    jwt:
+      secret-key: bXlTdXBlclNlY3JldEtleUZvckp3dFNpZ25pbmdQdXJwb3Nlc0J1YmJsZUJyZWF0aA==

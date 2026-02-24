@@ -4,6 +4,23 @@ server:
 spring:
   application:
     name: ADMIN-SERVICE
+  datasource:
+    url: jdbc:mysql://localhost:3306/admin_service_db?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+application:
+  security:
+    jwt:
+      secret-key: bXlTdXBlclNlY3JldEtleUZvckp3dFNpZ25pbmdQdXJwb3Nlc0J1YmJsZUJyZWF0aA==
+      expiration: 86400000
+      refresh-token:
+        expiration: 604800000
 
 eureka:
   client:

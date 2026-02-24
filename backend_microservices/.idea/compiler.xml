@@ -3,14 +3,20 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for admin_service" enabled="true">
+      <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-        </processorPath>
         <module name="admin_service" />
+        <module name="challenge_service" />
+        <module name="game_service" />
+        <module name="reward_service" />
+        <module name="discovery-server" />
+        <module name="payment_service" />
+        <module name="achievment_service" />
+        <module name="api-gateway" />
+        <module name="user_privileges" />
+        <module name="review_service" />
       </profile>
     </annotationProcessing>
   </component>

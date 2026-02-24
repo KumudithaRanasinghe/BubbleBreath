@@ -4,6 +4,20 @@ server:
 spring:
   application:
     name: CHALLENGE-SERVICE
+  datasource:
+    url: jdbc:mysql://localhost:3306/challenge_service_db?createDatabaseIfNotExist=true
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+application:
+  security:
+    jwt:
+      secret-key: bXlTdXBlclNlY3JldEtleUZvckp3dFNpZ25pbmdQdXJwb3Nlc0J1YmJsZUJyZWF0aA==
 
 eureka:
   client:
