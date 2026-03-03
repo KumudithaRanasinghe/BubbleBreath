@@ -1,0 +1,55 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: game-service-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: kumuditha1234
+      MYSQL_DATABASE: game_service
+      MYSQL_USER: kumuditha
+      MYSQL_PASSWORD: kumuditha1234
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - bubble-breath-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  game-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: game-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: kumuditha
+      SPRING_DATASOURCE_PASSWORD: kumuditha1234
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8003
+    ports:
+      - "8003:8003"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - bubble-breath-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8003/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  bubble-breath-network:
+    driver: bridge
+
+
+
