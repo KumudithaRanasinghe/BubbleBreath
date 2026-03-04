@@ -2,7 +2,6 @@ services:
   game-service:
     container_name: game_service_app
     image: ghcr.io/${GHCR_USERNAME_LC:-kumuditharanasinghe}/game_service:latest
-    logging:
     ports:
       - "8004:8004"
     environment:
