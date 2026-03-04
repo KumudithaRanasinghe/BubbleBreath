@@ -1,0 +1,57 @@
+name: CICD
+
+on:
+  push:
+    branches: [release/game_service]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Project
+        run: mvn clean install -DskipTests
+
+      - name: Login to GitHub Container Registry
+        run: echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+      - name: Build docker image
+        run: docker build -t ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest .
+
+      - name: Publish image to GHCR
+        run: docker push ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
+
+  deploy:
+    needs: build
+    runs-on: AWSEc2
+    steps:
+      - name: Pull image from GHCR
+        run: |
+          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+          docker pull ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
+
+      - name: Delete old container
+        run: docker rm -f game_service_app || true
+
+      - name: Run docker container
+        run: |
+          docker run -d \
+            --name game_service_app \
+            -p 8004:8004 \
+            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8 \
+            -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
+            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
+            -e SERVER_PORT=8004 \
+            -e TZ=Asia/Colombo \
+            --network game_service_default \
+            ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
+
