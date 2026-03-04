@@ -41,6 +41,9 @@ jobs:
       - name: Delete old container
         run: sudo docker rm -f game_service_app || true
 
+      - name: Create network if not exists
+        run: sudo docker network create game_service_default || true
+
       - name: Run docker container
         run: |
           sudo docker run -d \
