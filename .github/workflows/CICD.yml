@@ -35,15 +35,15 @@ jobs:
     steps:
       - name: Pull image from GHCR
         run: |
-          echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
-          docker pull ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
+          echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+          sudo docker pull ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
 
       - name: Delete old container
-        run: docker rm -f game_service_app || true
+        run: sudo docker rm -f game_service_app || true
 
       - name: Run docker container
         run: |
-          docker run -d \
+          sudo docker run -d \
             --name game_service_app \
             -p 8004:8004 \
             -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8 \
