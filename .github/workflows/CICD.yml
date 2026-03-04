@@ -46,7 +46,7 @@ jobs:
           sudo docker run -d \
             --name game_service_app \
             -p 8004:8004 \
-            -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8 \
+            -e "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8" \
             -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
             -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
             -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
