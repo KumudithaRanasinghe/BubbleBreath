@@ -33,28 +33,18 @@ jobs:
     needs: build
     runs-on: AWSEc2
     steps:
-      - name: Pull image from GHCR
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Create local env file
+        run: |
+          echo "GHCR_USERNAME_LC=$(echo '${{ secrets.GHCR_USERNAME }}' | tr '[:upper:]' '[:lower:]')" >> .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+
+      - name: Login and Deploy with Docker Compose
         run: |
           echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
-          sudo docker pull ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
-
-      - name: Delete old container
-        run: sudo docker rm -f game_service_app || true
-
-      - name: Create network if not exists
-        run: sudo docker network create game_service_default || true
-
-      - name: Run docker container
-        run: |
-          sudo docker run -d \
-            --name game_service_app \
-            -p 8004:8004 \
-            -e "SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/game_service?createDatabaseIfNotExist=true&useUnicode=yes&characterEncoding=UTF-8" \
-            -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USER }} \
-            -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
-            -e SPRING_JPA_HIBERNATE_DDL_AUTO=update \
-            -e SERVER_PORT=8004 \
-            -e TZ=Asia/Colombo \
-            --network game_service_default \
-            ghcr.io/${{ secrets.GHCR_USERNAME }}/game_service:latest
+          sudo docker compose pull
+          sudo docker compose up -d
 
