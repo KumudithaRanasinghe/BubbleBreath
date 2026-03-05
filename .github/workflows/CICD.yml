@@ -45,8 +45,9 @@ jobs:
       - name: Login and Deploy with Docker Compose
         run: |
           echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
-          # Remove existing containers to avoid name conflicts during transition to compose
-          sudo docker rm -f game_service_app game_service_mysql || true
-          sudo docker compose pull
-          sudo docker compose up -d --force-recreate
+          # Remove existing containers if they exist to avoid name conflicts
+          sudo docker rm -f game_service_app 2>/dev/null || true
+          sudo docker rm -f game_service_mysql 2>/dev/null || true
+          sudo docker-compose pull
+          sudo docker-compose up -d --force-recreate
 
