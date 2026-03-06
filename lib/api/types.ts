@@ -24,6 +24,12 @@ export interface ChangePasswordRequest {
   confirmNewPassword?: string
 }
 
+export interface RegisterRequest {
+  name: string
+  email: string
+  password: string
+}
+
 export interface MessageResponse {
   message: string
 }

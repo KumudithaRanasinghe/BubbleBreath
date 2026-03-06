@@ -35,8 +35,8 @@ import { Plus, Pencil, Trash2, Star, MessageSquare, ThumbsUp, Loader2 } from "lu
 import { toast } from "sonner"
 
 export default function AdminReviewsPage() {
-  const { reviews, isLoading, mutate } = useReviews()
-  const { games } = useGames()
+  const { data: reviews, isLoading, mutate } = useReviews()
+  const { data: games } = useGames()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingReview, setEditingReview] = useState<Review | null>(null)
   const [formData, setFormData] = useState({

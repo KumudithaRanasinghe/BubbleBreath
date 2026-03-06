@@ -8,35 +8,60 @@ import { Mascot } from "@/components/mascot"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Eye, EyeOff, Mail, Lock, Sparkles } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, User, Sparkles } from "lucide-react"
 import { toast } from "sonner"
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
-  const { login, isLoading } = useAuth()
+  const { register, isLoading } = useAuth()
   
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  })
   const [showPassword, setShowPassword] = useState(false)
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
 
   const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {}
+    const newErrors: Record<string, string> = {}
     
-    if (!email) {
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required"
+    } else if (formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters"
+    }
+    
+    if (!formData.email) {
       newErrors.email = "Email is required"
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Please enter a valid email"
     }
     
-    if (!password) {
+    if (!formData.password) {
       newErrors.password = "Password is required"
-    } else if (password.length < 6) {
+    } else if (formData.password.length < 6) {
       newErrors.password = "Password must be at least 6 characters"
+    }
+    
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password"
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
     }
     
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
+  }
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: "" }))
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -45,11 +70,15 @@ export default function LoginPage() {
     if (!validateForm()) return
     
     try {
-      await login({ email, password })
-      toast.success("Welcome back!")
+      await register({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      })
+      toast.success("Account created successfully!")
       router.push("/")
     } catch {
-      toast.error("Login failed. Please check your credentials.")
+      toast.error("Registration failed. Please try again.")
     }
   }
 
@@ -59,19 +88,41 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <Mascot mood="waving" size="lg" />
+            <Mascot mood="celebrating" size="lg" />
           </div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome to <span className="text-primary">Mind</span>Pals!
+            Join <span className="text-primary">Mind</span>Pals!
           </h1>
           <p className="text-muted-foreground">
-            Sign in to continue your adventure
+            Create an account to start your adventure
           </p>
         </div>
 
-        {/* Login Form */}
+        {/* Signup Form */}
         <div className="bg-card rounded-3xl border-4 border-primary/30 p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Name Field */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-foreground font-semibold">
+                Your Name
+              </Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Enter your name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="pl-10 h-12 rounded-xl border-2 border-border focus:border-primary"
+                />
+              </div>
+              {errors.name && (
+                <p className="text-sm text-destructive">{errors.name}</p>
+              )}
+            </div>
+
             {/* Email Field */}
             <div className="space-y-2">
               <Label htmlFor="email" className="text-foreground font-semibold">
@@ -81,10 +132,11 @@ export default function LoginPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="your@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={handleChange}
                   className="pl-10 h-12 rounded-xl border-2 border-border focus:border-primary"
                 />
               </div>
@@ -102,10 +154,11 @@ export default function LoginPage() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Create a password"
+                  value={formData.password}
+                  onChange={handleChange}
                   className="pl-10 pr-10 h-12 rounded-xl border-2 border-border focus:border-primary"
                 />
                 <button
@@ -121,14 +174,33 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Forgot Password Link */}
-            <div className="text-right">
-              <Link 
-                href="/forgot-password" 
-                className="text-sm text-primary hover:underline font-medium"
-              >
-                Forgot your password?
-              </Link>
+            {/* Confirm Password Field */}
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-foreground font-semibold">
+                Confirm Password
+              </Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="pl-10 pr-10 h-12 rounded-xl border-2 border-border focus:border-primary"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <p className="text-sm text-destructive">{errors.confirmPassword}</p>
+              )}
             </div>
 
             {/* Submit Button */}
@@ -140,12 +212,12 @@ export default function LoginPage() {
               {isLoading ? (
                 <span className="flex items-center gap-2">
                   <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Signing in...
+                  Creating account...
                 </span>
               ) : (
                 <span className="flex items-center gap-2">
                   <Sparkles className="w-5 h-5" />
-                  Sign In
+                  Create Account
                 </span>
               )}
             </Button>
@@ -158,18 +230,18 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-border" />
           </div>
 
-          {/* Signup Link */}
+          {/* Login Link */}
           <p className="text-center text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link href="/signup" className="text-primary font-semibold hover:underline">
-              Sign Up
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary font-semibold hover:underline">
+              Sign In
             </Link>
           </p>
         </div>
 
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground mt-6">
-          By signing in, you agree to our{" "}
+          By signing up, you agree to our{" "}
           <Link href="/terms" className="text-primary hover:underline">Terms</Link>
           {" "}and{" "}
           <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
