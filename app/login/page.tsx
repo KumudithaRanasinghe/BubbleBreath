@@ -158,6 +158,48 @@ export default function LoginPage() {
             <div className="flex-1 h-px bg-border" />
           </div>
 
+          {/* Sample Login Credentials */}
+          <div className="bg-muted/50 rounded-xl p-4 mb-6 border-2 border-dashed border-border">
+            <p className="text-sm font-semibold text-foreground mb-3 text-center">
+              Sample Login Credentials (Testing)
+            </p>
+            <div className="space-y-3">
+              {/* User Credentials */}
+              <div 
+                className="bg-card rounded-lg p-3 cursor-pointer hover:bg-accent transition-colors border border-border"
+                onClick={() => {
+                  setEmail("user@mindpals.com")
+                  setPassword("user123456")
+                  toast.info("User credentials filled!")
+                }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-mint uppercase tracking-wide">User Account</span>
+                  <span className="text-xs text-muted-foreground">Click to fill</span>
+                </div>
+                <p className="text-sm text-foreground">user@mindpals.com</p>
+                <p className="text-sm text-muted-foreground">user123456</p>
+              </div>
+              
+              {/* Admin Credentials */}
+              <div 
+                className="bg-card rounded-lg p-3 cursor-pointer hover:bg-accent transition-colors border border-border"
+                onClick={() => {
+                  setEmail("admin@mindpals.com")
+                  setPassword("admin123456")
+                  toast.info("Admin credentials filled!")
+                }}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-bold text-coral uppercase tracking-wide">Admin Account</span>
+                  <span className="text-xs text-muted-foreground">Click to fill</span>
+                </div>
+                <p className="text-sm text-foreground">admin@mindpals.com</p>
+                <p className="text-sm text-muted-foreground">admin123456</p>
+              </div>
+            </div>
+          </div>
+
           {/* Signup Link */}
           <p className="text-center text-muted-foreground">
             Don&apos;t have an account?{" "}
