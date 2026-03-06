@@ -34,7 +34,7 @@ import { Plus, Pencil, Trash2, CreditCard, DollarSign, Users, TrendingUp, Loader
 import { toast } from "sonner"
 
 export default function AdminPaymentsPage() {
-  const { payments, isLoading, mutate } = usePayments()
+  const { data: payments, isLoading, mutate } = usePayments()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingPayment, setEditingPayment] = useState<Payment | null>(null)
   const [formData, setFormData] = useState({

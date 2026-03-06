@@ -2,13 +2,14 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { authApi, tokenManager } from '@/lib/api/client'
-import type { User, LoginRequest, ApiError } from '@/lib/api/types'
+import type { User, LoginRequest, RegisterRequest, ApiError } from '@/lib/api/types'
 
 interface AuthContextType {
   user: User | null
   isLoading: boolean
   isAuthenticated: boolean
   login: (data: LoginRequest) => Promise<void>
+  register: (data: RegisterRequest) => Promise<void>
   logout: () => Promise<void>
   logoutAll: () => Promise<void>
   refreshUser: () => void
@@ -55,6 +56,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const register = async (data: RegisterRequest) => {
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      const response = await authApi.register(data)
+      setUser(response.user)
+    } catch (err) {
+      const apiError = err as ApiError
+      setError(apiError.message || 'Registration failed')
+      throw err
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const logout = async () => {
     setIsLoading(true)
     
@@ -92,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        register,
         logout,
         logoutAll,
         refreshUser,

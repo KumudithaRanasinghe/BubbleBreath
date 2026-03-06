@@ -1,7 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
 import { useChallenges, useGames } from "@/hooks/use-api"
 import { challengeApi } from "@/lib/api/client"
 import { Button } from "@/components/ui/button"
@@ -24,7 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ArrowLeft, Plus, Pencil, Trash2, Loader2, Target, Search } from "lucide-react"
+import { Plus, Pencil, Trash2, Loader2, Target, Search } from "lucide-react"
 import { toast } from "sonner"
 import { mutate } from "swr"
 import type { Challenge, ChallengeRequest } from "@/lib/api/types"
@@ -134,29 +133,17 @@ export default function ChallengesAdminPage() {
   )
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="bg-card border-b-4 border-primary/20">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/admin">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <ArrowLeft className="w-5 h-5" />
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-                <Target className="w-6 h-6 text-coral" />
-                Challenges Management
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Create, edit, and delete challenges
-              </p>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div>
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <Target className="w-6 h-6 text-coral" />
+          Challenges Management
+        </h1>
+        <p className="text-muted-foreground">Create, edit, and delete challenges</p>
+      </div>
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <div>
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -444,7 +431,7 @@ export default function ChallengesAdminPage() {
             </div>
           </DialogContent>
         </Dialog>
-      </main>
+      </div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import type {
   LoginRequest,
+  RegisterRequest,
   AuthResponse,
   RefreshTokenRequest,
   ForgotPasswordRequest,
@@ -160,6 +161,23 @@ async function parseError(response: Response): Promise<ApiError> {
 export const authApi = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await fetch(`${AUTH_SERVICE_URL}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    
+    if (!response.ok) {
+      throw await parseError(response)
+    }
+    
+    const result: AuthResponse = await response.json()
+    tokenManager.setTokens(result.accessToken, result.refreshToken)
+    tokenManager.setUser(result.user)
+    return result
+  },
+
+  register: async (data: RegisterRequest): Promise<AuthResponse> => {
+    const response = await fetch(`${AUTH_SERVICE_URL}/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

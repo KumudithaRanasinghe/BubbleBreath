@@ -61,7 +61,7 @@ const availablePermissions = [
 ]
 
 export default function AdminPrivilegesPage() {
-  const { privileges, isLoading, mutate } = usePrivileges()
+  const { data: privileges, isLoading, mutate } = usePrivileges()
   const [isCreateOpen, setIsCreateOpen] = useState(false)
   const [editingPrivilege, setEditingPrivilege] = useState<Privilege | null>(null)
   const [formData, setFormData] = useState({
