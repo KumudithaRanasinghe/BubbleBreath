@@ -17,7 +17,7 @@ const activities = [
   { id: "mirror", name: "Mirror Game", description: "Copy the expressions you see!", icon: "mirror" },
   { id: "breathing", name: "Breathing Buddy", description: "Breathe with the bubble!", icon: "breathing" },
   { id: "emotions", name: "Emotion Explorer", description: "Can you make these faces?", icon: "emotions" },
-  { id: "ml-analysis", name: "Expression Analysis", description: "Let AI analyze your expression!", icon: "ml" },
+  { id: "ml-analysis", name: "Smile Detector", description: "Let AI analyze your smile!", icon: "ml" },
 ]
 
 export default function VideoSessionPage() {

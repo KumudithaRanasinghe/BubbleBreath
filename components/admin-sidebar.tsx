@@ -12,7 +12,7 @@ import {
   MessageSquare, 
   CreditCard, 
   Shield,
-  Image,
+  Smile,
   Home,
   ChevronLeft
 } from "lucide-react"
@@ -27,7 +27,7 @@ const sidebarItems = [
   { href: "/admin/reviews", label: "Reviews", icon: MessageSquare },
   { href: "/admin/payments", label: "Payments", icon: CreditCard },
   { href: "/admin/privileges", label: "Privileges", icon: Shield },
-  { href: "/admin/ml-ratings", label: "ML Ratings", icon: Image },
+  { href: "/admin/ml-ratings", label: "Smile Therapy", icon: Smile },
 ]
 
 export function AdminSidebar() {

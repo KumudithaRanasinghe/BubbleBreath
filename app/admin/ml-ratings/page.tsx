@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { toast } from "sonner"
-import { Pencil, Trash2, Loader2, Image, Search, Eye } from "lucide-react"
+import { Pencil, Trash2, Loader2, Smile, Search, Eye } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function MLRatingsAdminPage() {
@@ -110,10 +110,10 @@ export default function MLRatingsAdminPage() {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
-          <Image className="w-6 h-6 text-sky" />
-          ML Image Ratings
+          <Smile className="w-6 h-6 text-sunny" />
+          Smile Therapy Results
         </h1>
-        <p className="text-muted-foreground">View and manage ML image classification results</p>
+        <p className="text-muted-foreground">View and manage smile therapy game results</p>
       </div>
 
       <div>

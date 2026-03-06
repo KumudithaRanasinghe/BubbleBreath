@@ -5,7 +5,7 @@ import { AppNav } from "@/components/app-nav"
 import { GameCard } from "@/components/game-card"
 import { Mascot } from "@/components/mascot"
 import { useGames, useCategories } from "@/hooks/use-api"
-import { Wind, Heart, Users, Brain, Palette, Music, Star, Lock, Loader2 } from "lucide-react"
+import { Wind, Heart, Users, Brain, Palette, Music, Smile, Star, Lock, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // Icon mapping for games
@@ -16,6 +16,7 @@ const iconMap: Record<string, React.ReactNode> = {
   brain: <Brain className="w-10 h-10" />,
   palette: <Palette className="w-10 h-10" />,
   music: <Music className="w-10 h-10" />,
+  smile: <Smile className="w-10 h-10" />,
 }
 
 // Color mapping
@@ -30,12 +31,24 @@ const colorMap: Record<string, "coral" | "mint" | "sunny" | "sky" | "lavender"> 
 // Fallback static games for when API is unavailable
 const fallbackGames = [
   {
+    id: "smile-therapy",
+    name: "Smile Therapy",
+    description: "Practice your smile with AI-powered feedback and earn points!",
+    icon: "smile",
+    href: "/games/smile-therapy",
+    level: 1,
+    unlocked: true,
+    stars: 0,
+    color: "sunny",
+    categoryId: "emotions",
+  },
+  {
     id: "bubble-breathing",
     name: "Bubble Breathing",
     description: "Blow magical bubbles by taking slow, deep breaths!",
     icon: "wind",
     href: "/games/bubble-breathing",
-    level: 1,
+    level: 2,
     unlocked: true,
     stars: 3,
     color: "mint",
