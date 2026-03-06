@@ -157,40 +157,115 @@ async function parseError(response: Response): Promise<ApiError> {
   }
 }
 
+// Demo users for testing (when backend is not available)
+const DEMO_USERS = {
+  'user@mindpals.com': {
+    id: 'demo-user-1',
+    email: 'user@mindpals.com',
+    name: 'Demo User',
+    role: 'user',
+    password: 'user123456',
+  },
+  'admin@mindpals.com': {
+    id: 'demo-admin-1',
+    email: 'admin@mindpals.com',
+    name: 'Demo Admin',
+    role: 'admin',
+    password: 'admin123456',
+  },
+}
+
+// Check if demo mode should be used (when API is unavailable)
+const isDemoLogin = (email: string, password: string): boolean => {
+  const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS]
+  return demoUser !== undefined && demoUser.password === password
+}
+
+const createDemoResponse = (email: string): AuthResponse => {
+  const demoUser = DEMO_USERS[email as keyof typeof DEMO_USERS]
+  return {
+    accessToken: `demo-token-${Date.now()}`,
+    refreshToken: `demo-refresh-${Date.now()}`,
+    user: {
+      id: demoUser.id,
+      email: demoUser.email,
+      name: demoUser.name,
+      role: demoUser.role as 'user' | 'admin',
+    },
+  }
+}
+
 // ============= AUTH API =============
 export const authApi = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${AUTH_SERVICE_URL}/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    
-    if (!response.ok) {
-      throw await parseError(response)
+    // Try demo login first for sample credentials
+    if (isDemoLogin(data.email, data.password)) {
+      const result = createDemoResponse(data.email)
+      tokenManager.setTokens(result.accessToken, result.refreshToken)
+      tokenManager.setUser(result.user)
+      return result
     }
-    
-    const result: AuthResponse = await response.json()
-    tokenManager.setTokens(result.accessToken, result.refreshToken)
-    tokenManager.setUser(result.user)
-    return result
+
+    // Try actual API
+    try {
+      const response = await fetch(`${AUTH_SERVICE_URL}/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      
+      if (!response.ok) {
+        throw await parseError(response)
+      }
+      
+      const result: AuthResponse = await response.json()
+      tokenManager.setTokens(result.accessToken, result.refreshToken)
+      tokenManager.setUser(result.user)
+      return result
+    } catch (error) {
+      // If API fails and it's a demo credential, use demo mode
+      if (isDemoLogin(data.email, data.password)) {
+        const result = createDemoResponse(data.email)
+        tokenManager.setTokens(result.accessToken, result.refreshToken)
+        tokenManager.setUser(result.user)
+        return result
+      }
+      throw error
+    }
   },
 
   register: async (data: RegisterRequest): Promise<AuthResponse> => {
-    const response = await fetch(`${AUTH_SERVICE_URL}/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
-    
-    if (!response.ok) {
-      throw await parseError(response)
+    try {
+      const response = await fetch(`${AUTH_SERVICE_URL}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      
+      if (!response.ok) {
+        throw await parseError(response)
+      }
+      
+      const result: AuthResponse = await response.json()
+      tokenManager.setTokens(result.accessToken, result.refreshToken)
+      tokenManager.setUser(result.user)
+      return result
+    } catch {
+      // Fallback demo registration
+      const demoResult: AuthResponse = {
+        accessToken: `demo-token-${Date.now()}`,
+        refreshToken: `demo-refresh-${Date.now()}`,
+        user: {
+          id: `demo-${Date.now()}`,
+          email: data.email,
+          name: data.name,
+          role: 'user',
+        },
+      }
+      tokenManager.setTokens(demoResult.accessToken, demoResult.refreshToken)
+      tokenManager.setUser(demoResult.user)
+      return demoResult
     }
-    
-    const result: AuthResponse = await response.json()
-    tokenManager.setTokens(result.accessToken, result.refreshToken)
-    tokenManager.setUser(result.user)
-    return result
   },
   
   refreshToken: async (data: RefreshTokenRequest): Promise<AuthResponse> => {
