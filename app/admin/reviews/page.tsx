@@ -133,7 +133,7 @@ export default function AdminReviewsPage() {
 
   const getGameName = (gameId: string) => {
     const game = games?.find(g => g.id === gameId)
-    return game?.title || "Unknown Game"
+    return game?.name || "Unknown Game"
   }
 
   if (isLoading) {
@@ -171,7 +171,7 @@ export default function AdminReviewsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {games?.map((game) => (
-                      <SelectItem key={game.id} value={game.id}>{game.title}</SelectItem>
+                      <SelectItem key={game.id} value={game.id}>{game.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

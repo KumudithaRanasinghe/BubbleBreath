@@ -95,21 +95,29 @@ export interface Payment {
   id: string
   userId: string
   amount: number
-  method: string
+  currency: string
+  paymentMethod: string
   status: 'pending' | 'completed' | 'failed' | 'refunded'
   description?: string
-  createdAt?: string
+  createdAt: string
 }
 
 export interface PaymentRequest {
   userId: string
   amount: number
-  method: string
+  currency: string
+  status: 'pending' | 'completed' | 'failed' | 'refunded'
+  paymentMethod: string
   description?: string
 }
 
-export interface PaymentUpdateRequest extends Partial<PaymentRequest> {
+export interface PaymentUpdateRequest {
   id: string
+  amount?: number
+  currency?: string
+  status?: 'pending' | 'completed' | 'failed' | 'refunded'
+  paymentMethod?: string
+  description?: string
 }
 
 // Achievement Types
@@ -173,10 +181,11 @@ export interface Review {
   gameId: string
   userId: string
   rating: number
-  comment?: string
+  comment: string
+  isApproved: boolean
   userName?: string
   gameName?: string
-  createdAt?: string
+  createdAt: string
 }
 
 export interface ReviewRequest {
@@ -184,6 +193,7 @@ export interface ReviewRequest {
   userId: string
   rating: number
   comment?: string
+  isApproved?: boolean
 }
 
 export interface ReviewUpdateRequest extends Partial<ReviewRequest> {
@@ -194,15 +204,15 @@ export interface ReviewUpdateRequest extends Partial<ReviewRequest> {
 export interface Privilege {
   id: string
   name: string
-  description?: string
-  permissions?: string[]
-  createdAt?: string
+  description: string
+  permissions: string[]
+  createdAt: string
 }
 
 export interface PrivilegeRequest {
   name: string
   description?: string
-  permissions?: string[]
+  permissions: string[]
 }
 
 export interface PrivilegeUpdateRequest extends Partial<PrivilegeRequest> {
