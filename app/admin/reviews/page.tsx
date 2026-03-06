@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useReviews, useGames } from "@/hooks/use-api"
-import { apiClient, type Review } from "@/lib/api"
+import { reviewApi, type Review } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -59,7 +59,7 @@ export default function AdminReviewsPage() {
 
   const handleCreate = async () => {
     try {
-      await apiClient.reviews.create({
+      await reviewApi.create({
         gameId: formData.gameId,
         userId: formData.userId,
         rating: parseInt(formData.rating),
@@ -78,7 +78,8 @@ export default function AdminReviewsPage() {
   const handleUpdate = async () => {
     if (!editingReview) return
     try {
-      await apiClient.reviews.update(editingReview.id, {
+      await reviewApi.update({
+        id: editingReview.id,
         rating: parseInt(formData.rating),
         comment: formData.comment,
         isApproved: formData.isApproved,
@@ -95,7 +96,7 @@ export default function AdminReviewsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return
     try {
-      await apiClient.reviews.delete(id)
+      await reviewApi.delete(id)
       toast.success("Review deleted successfully")
       mutate()
     } catch {
@@ -105,7 +106,7 @@ export default function AdminReviewsPage() {
 
   const handleApprove = async (review: Review) => {
     try {
-      await apiClient.reviews.update(review.id, { isApproved: !review.isApproved })
+      await reviewApi.update({ id: review.id, isApproved: !review.isApproved })
       toast.success(review.isApproved ? "Review hidden" : "Review approved")
       mutate()
     } catch {
