@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { usePayments } from "@/hooks/use-api"
-import { paymentApi, type Payment } from "@/lib/api"
+import { demoStore } from "@/lib/demo-data"
+import type { Payment } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -59,7 +60,7 @@ export default function AdminPaymentsPage() {
 
   const handleCreate = async () => {
     try {
-      await paymentApi.create({
+      demoStore.payments.create({
         userId: formData.userId,
         amount: parseFloat(formData.amount),
         currency: formData.currency,
@@ -79,8 +80,7 @@ export default function AdminPaymentsPage() {
   const handleUpdate = async () => {
     if (!editingPayment) return
     try {
-      await paymentApi.update({
-        id: editingPayment.id,
+      demoStore.payments.update(editingPayment.id, {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         status: formData.status,
@@ -99,7 +99,7 @@ export default function AdminPaymentsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this payment?")) return
     try {
-      await paymentApi.delete(id)
+      demoStore.payments.delete(id)
       toast.success("Payment deleted successfully")
       mutate()
     } catch {

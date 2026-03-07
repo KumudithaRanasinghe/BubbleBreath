@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { AppNav } from "@/components/app-nav"
 import { Mascot } from "@/components/mascot"
 import { useAuth } from "@/lib/auth-context"
-import { mlApi } from "@/lib/api/client"
+import { demoStore } from "@/lib/demo-data"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { 
@@ -132,11 +132,11 @@ export default function SmileTherapyPage() {
         return
       }
 
-      const file = new File([blob], 'smile.jpg', { type: 'image/jpeg' })
       const imageUrl = URL.createObjectURL(blob)
       setCapturedImage(imageUrl)
 
-      const result = await mlApi.classifyImage(parseInt(user.id), file)
+      // Use demo store for ML classification (simulates backend)
+      const result = demoStore.mlRatings.classifyImage(parseInt(user.id) || 1)
       setMlResult(result)
 
       const challenge = smileChallenges[currentChallenge]

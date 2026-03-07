@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useCategories } from "@/hooks/use-api"
-import { categoryApi } from "@/lib/api/client"
+import { demoStore } from "@/lib/demo-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -60,7 +60,7 @@ export default function CategoriesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await categoryApi.create(formData)
+      demoStore.categories.create(formData)
       toast.success("Category created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -78,10 +78,7 @@ export default function CategoriesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await categoryApi.update({
-        id: editingCategory.id,
-        ...formData,
-      })
+      demoStore.categories.update(editingCategory.id, formData)
       toast.success("Category updated successfully!")
       setEditingCategory(null)
       resetForm()
@@ -99,7 +96,7 @@ export default function CategoriesAdminPage() {
 
     setDeletingId(id)
     try {
-      await categoryApi.delete(id)
+      demoStore.categories.delete(id)
       toast.success("Category deleted successfully!")
       mutate("categories")
     } catch (err) {

@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { usePrivileges } from "@/hooks/use-api"
-import { privilegeApi, type Privilege } from "@/lib/api"
+import { demoStore } from "@/lib/demo-data"
+import type { Privilege } from "@/lib/api"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -80,7 +81,7 @@ export default function AdminPrivilegesPage() {
 
   const handleCreate = async () => {
     try {
-      await privilegeApi.create({
+      demoStore.privileges.create({
         name: formData.name,
         description: formData.description,
         permissions: formData.permissions,
@@ -97,8 +98,7 @@ export default function AdminPrivilegesPage() {
   const handleUpdate = async () => {
     if (!editingPrivilege) return
     try {
-      await privilegeApi.update({
-        id: editingPrivilege.id,
+      demoStore.privileges.update(editingPrivilege.id, {
         name: formData.name,
         description: formData.description,
         permissions: formData.permissions,
@@ -115,7 +115,7 @@ export default function AdminPrivilegesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this privilege?")) return
     try {
-      await privilegeApi.delete(id)
+      demoStore.privileges.delete(id)
       toast.success("Privilege deleted successfully")
       mutate()
     } catch {

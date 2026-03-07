@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useGames, useCategories } from "@/hooks/use-api"
-import { gameApi } from "@/lib/api/client"
+import { demoStore } from "@/lib/demo-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -65,7 +65,11 @@ export default function GamesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await gameApi.create(formData)
+      demoStore.games.create({
+        ...formData,
+        unlocked: true,
+        stars: 0,
+      })
       toast.success("Game created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -83,10 +87,7 @@ export default function GamesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await gameApi.update({
-        id: editingGame.id,
-        ...formData,
-      })
+      demoStore.games.update(editingGame.id, formData)
       toast.success("Game updated successfully!")
       setEditingGame(null)
       resetForm()
@@ -104,7 +105,7 @@ export default function GamesAdminPage() {
 
     setDeletingId(id)
     try {
-      await gameApi.delete(id)
+      demoStore.games.delete(id)
       toast.success("Game deleted successfully!")
       mutate("games")
     } catch (err) {

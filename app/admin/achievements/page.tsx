@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAchievements } from "@/hooks/use-api"
-import { achievementApi } from "@/lib/api/client"
+import { demoStore } from "@/lib/demo-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -64,7 +64,7 @@ export default function AchievementsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await achievementApi.create(formData)
+      demoStore.achievements.create({ ...formData, unlocked: false, progress: 0, maxProgress: formData.value })
       toast.success("Achievement created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -82,10 +82,7 @@ export default function AchievementsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await achievementApi.update({
-        id: editingAchievement.id,
-        ...formData,
-      })
+      demoStore.achievements.update(editingAchievement.id, formData)
       toast.success("Achievement updated successfully!")
       setEditingAchievement(null)
       resetForm()
@@ -103,7 +100,7 @@ export default function AchievementsAdminPage() {
 
     setDeletingId(id)
     try {
-      await achievementApi.delete(id)
+      demoStore.achievements.delete(id)
       toast.success("Achievement deleted successfully!")
       mutate("achievements")
     } catch (err) {

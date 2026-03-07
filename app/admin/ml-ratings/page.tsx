@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useImageRatings } from "@/hooks/use-api"
-import { mlApi, type ImageRating } from "@/lib/api"
+import { demoStore } from "@/lib/demo-data"
+import type { ImageRating } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -67,7 +68,7 @@ export default function MLRatingsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await mlApi.update(editingRating.id, formData)
+      demoStore.mlRatings.update(editingRating.id, formData)
       toast.success("Rating updated successfully")
       setEditingRating(null)
       mutate()
@@ -81,7 +82,7 @@ export default function MLRatingsAdminPage() {
   const handleDelete = async (id: number) => {
     setIsSubmitting(true)
     try {
-      await mlApi.delete(id)
+      demoStore.mlRatings.delete(id)
       toast.success("Rating deleted successfully")
       setDeletingId(null)
       mutate()
