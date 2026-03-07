@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useChallenges, useGames } from "@/hooks/use-api"
-import { challengeApi } from "@/lib/api/client"
+import { demoStore } from "@/lib/demo-data"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -66,7 +66,7 @@ export default function ChallengesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await challengeApi.create(formData)
+      demoStore.challenges.create({ ...formData, active: true, completed: false })
       toast.success("Challenge created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -84,10 +84,7 @@ export default function ChallengesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      await challengeApi.update({
-        id: editingChallenge.id,
-        ...formData,
-      })
+      demoStore.challenges.update(editingChallenge.id, formData)
       toast.success("Challenge updated successfully!")
       setEditingChallenge(null)
       resetForm()
@@ -105,7 +102,7 @@ export default function ChallengesAdminPage() {
 
     setDeletingId(id)
     try {
-      await challengeApi.delete(id)
+      demoStore.challenges.delete(id)
       toast.success("Challenge deleted successfully!")
       mutate("challenges")
     } catch (err) {
