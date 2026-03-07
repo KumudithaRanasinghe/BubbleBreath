@@ -126,6 +126,9 @@ function generateId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
 }
 
+// Check if we're in browser environment
+const isBrowser = typeof window !== 'undefined'
+
 // API Request helper with logging
 async function apiRequest<T>(
   method: string,
@@ -133,6 +136,11 @@ async function apiRequest<T>(
   body?: unknown,
   isFormData = false
 ): Promise<{ success: boolean; data?: T; error?: string }> {
+  // Skip API calls during SSR
+  if (!isBrowser) {
+    return { success: false, error: 'SSR - skipping API call' }
+  }
+
   console.log(`[v0 API] ${method} ${url}`)
   if (body && !isFormData) {
     console.log('[v0 API] Request Body:', JSON.stringify(body, null, 2))
