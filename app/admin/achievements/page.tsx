@@ -64,7 +64,7 @@ export default function AchievementsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.achievements.create({ ...formData, unlocked: false, progress: 0, maxProgress: formData.value })
+      await demoStore.achievements.create({ ...formData, unlocked: false, progress: 0, maxProgress: formData.value })
       toast.success("Achievement created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -82,7 +82,7 @@ export default function AchievementsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.achievements.update(editingAchievement.id, formData)
+      await demoStore.achievements.update(editingAchievement.id, formData)
       toast.success("Achievement updated successfully!")
       setEditingAchievement(null)
       resetForm()
@@ -100,7 +100,7 @@ export default function AchievementsAdminPage() {
 
     setDeletingId(id)
     try {
-      demoStore.achievements.delete(id)
+      await demoStore.achievements.delete(id)
       toast.success("Achievement deleted successfully!")
       mutate("achievements")
     } catch (err) {

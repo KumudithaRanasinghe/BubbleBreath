@@ -65,7 +65,7 @@ export default function GamesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.games.create({
+      await demoStore.games.create({
         ...formData,
         unlocked: true,
         stars: 0,
@@ -87,7 +87,7 @@ export default function GamesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.games.update(editingGame.id, formData)
+      await demoStore.games.update(editingGame.id, formData)
       toast.success("Game updated successfully!")
       setEditingGame(null)
       resetForm()
@@ -105,7 +105,7 @@ export default function GamesAdminPage() {
 
     setDeletingId(id)
     try {
-      demoStore.games.delete(id)
+      await demoStore.games.delete(id)
       toast.success("Game deleted successfully!")
       mutate("games")
     } catch (err) {

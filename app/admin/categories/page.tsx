@@ -60,7 +60,7 @@ export default function CategoriesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.categories.create(formData)
+      await demoStore.categories.create(formData)
       toast.success("Category created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -78,7 +78,7 @@ export default function CategoriesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.categories.update(editingCategory.id, formData)
+      await demoStore.categories.update(editingCategory.id, formData)
       toast.success("Category updated successfully!")
       setEditingCategory(null)
       resetForm()
@@ -96,7 +96,7 @@ export default function CategoriesAdminPage() {
 
     setDeletingId(id)
     try {
-      demoStore.categories.delete(id)
+      await demoStore.categories.delete(id)
       toast.success("Category deleted successfully!")
       mutate("categories")
     } catch (err) {

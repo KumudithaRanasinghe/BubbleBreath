@@ -60,7 +60,7 @@ export default function AdminPaymentsPage() {
 
   const handleCreate = async () => {
     try {
-      demoStore.payments.create({
+      await demoStore.payments.create({
         userId: formData.userId,
         amount: parseFloat(formData.amount),
         currency: formData.currency,
@@ -80,7 +80,7 @@ export default function AdminPaymentsPage() {
   const handleUpdate = async () => {
     if (!editingPayment) return
     try {
-      demoStore.payments.update(editingPayment.id, {
+      await demoStore.payments.update(editingPayment.id, {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         status: formData.status,
@@ -99,7 +99,7 @@ export default function AdminPaymentsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this payment?")) return
     try {
-      demoStore.payments.delete(id)
+      await demoStore.payments.delete(id)
       toast.success("Payment deleted successfully")
       mutate()
     } catch {
