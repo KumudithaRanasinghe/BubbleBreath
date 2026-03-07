@@ -241,20 +241,20 @@ export default function AchievementsAdminPage() {
           </Dialog>
         </div>
 
-        {isLoading && (
+        {isLoading && !achievements && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
             <span className="ml-2 text-muted-foreground">Loading achievements...</span>
           </div>
         )}
 
-        {error && (
+        {error && !achievements && (
           <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-4 text-center">
             <p className="text-destructive">Failed to load achievements. Please try again.</p>
           </div>
         )}
 
-        {!isLoading && !error && (
+        {achievements && (
           <div className="bg-card rounded-2xl border-2 border-border overflow-hidden">
             <Table>
               <TableHeader>

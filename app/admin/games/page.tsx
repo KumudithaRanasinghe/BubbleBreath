@@ -244,7 +244,7 @@ export default function GamesAdminPage() {
         </div>
 
         {/* Loading State */}
-        {isLoading && (
+        {isLoading && !games && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
             <span className="ml-2 text-muted-foreground">Loading games...</span>
@@ -252,14 +252,14 @@ export default function GamesAdminPage() {
         )}
 
         {/* Error State */}
-        {error && (
+        {error && !games && (
           <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-4 text-center">
             <p className="text-destructive">Failed to load games. Please try again.</p>
           </div>
         )}
 
         {/* Games Table */}
-        {!isLoading && !error && (
+        {games && (
           <div className="bg-card rounded-2xl border-2 border-border overflow-hidden">
             <Table>
               <TableHeader>

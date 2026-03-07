@@ -212,20 +212,20 @@ export default function CategoriesAdminPage() {
           </Dialog>
         </div>
 
-        {isLoading && (
+        {isLoading && !categories && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
             <span className="ml-2 text-muted-foreground">Loading categories...</span>
           </div>
         )}
 
-        {error && (
+        {error && !categories && (
           <div className="bg-destructive/10 border-2 border-destructive rounded-xl p-4 text-center">
             <p className="text-destructive">Failed to load categories. Please try again.</p>
           </div>
         )}
 
-        {!isLoading && !error && (
+        {categories && (
           <div className="bg-card rounded-2xl border-2 border-border overflow-hidden">
             <Table>
               <TableHeader>
