@@ -81,7 +81,7 @@ export default function AdminPrivilegesPage() {
 
   const handleCreate = async () => {
     try {
-      demoStore.privileges.create({
+      await demoStore.privileges.create({
         name: formData.name,
         description: formData.description,
         permissions: formData.permissions,
@@ -98,7 +98,7 @@ export default function AdminPrivilegesPage() {
   const handleUpdate = async () => {
     if (!editingPrivilege) return
     try {
-      demoStore.privileges.update(editingPrivilege.id, {
+      await demoStore.privileges.update(editingPrivilege.id, {
         name: formData.name,
         description: formData.description,
         permissions: formData.permissions,
@@ -115,7 +115,7 @@ export default function AdminPrivilegesPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this privilege?")) return
     try {
-      demoStore.privileges.delete(id)
+      await demoStore.privileges.delete(id)
       toast.success("Privilege deleted successfully")
       mutate()
     } catch {

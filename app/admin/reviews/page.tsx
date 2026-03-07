@@ -60,7 +60,7 @@ export default function AdminReviewsPage() {
 
   const handleCreate = async () => {
     try {
-      demoStore.reviews.create({
+      await demoStore.reviews.create({
         gameId: formData.gameId,
         userId: formData.userId,
         rating: parseInt(formData.rating),
@@ -79,7 +79,7 @@ export default function AdminReviewsPage() {
   const handleUpdate = async () => {
     if (!editingReview) return
     try {
-      demoStore.reviews.update(editingReview.id, {
+      await demoStore.reviews.update(editingReview.id, {
         rating: parseInt(formData.rating),
         comment: formData.comment,
         isApproved: formData.isApproved,
@@ -96,7 +96,7 @@ export default function AdminReviewsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this review?")) return
     try {
-      demoStore.reviews.delete(id)
+      await demoStore.reviews.delete(id)
       toast.success("Review deleted successfully")
       mutate()
     } catch {
@@ -106,7 +106,7 @@ export default function AdminReviewsPage() {
 
   const handleApprove = async (review: Review) => {
     try {
-      demoStore.reviews.update(review.id, { isApproved: !review.isApproved })
+      await demoStore.reviews.update(review.id, { isApproved: !review.isApproved })
       toast.success(review.isApproved ? "Review hidden" : "Review approved")
       mutate()
     } catch {

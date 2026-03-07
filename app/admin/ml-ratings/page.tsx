@@ -68,7 +68,7 @@ export default function MLRatingsAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.mlRatings.update(editingRating.id, formData)
+      await demoStore.mlRatings.update(editingRating.id, formData)
       toast.success("Rating updated successfully")
       setEditingRating(null)
       mutate()
@@ -82,7 +82,7 @@ export default function MLRatingsAdminPage() {
   const handleDelete = async (id: number) => {
     setIsSubmitting(true)
     try {
-      demoStore.mlRatings.delete(id)
+      await demoStore.mlRatings.delete(id)
       toast.success("Rating deleted successfully")
       setDeletingId(null)
       mutate()

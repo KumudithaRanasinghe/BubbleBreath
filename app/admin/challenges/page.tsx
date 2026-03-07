@@ -66,7 +66,7 @@ export default function ChallengesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.challenges.create({ ...formData, active: true, completed: false })
+      await demoStore.challenges.create({ ...formData, active: true, completed: false })
       toast.success("Challenge created successfully!")
       setIsCreateOpen(false)
       resetForm()
@@ -84,7 +84,7 @@ export default function ChallengesAdminPage() {
 
     setIsSubmitting(true)
     try {
-      demoStore.challenges.update(editingChallenge.id, formData)
+      await demoStore.challenges.update(editingChallenge.id, formData)
       toast.success("Challenge updated successfully!")
       setEditingChallenge(null)
       resetForm()
@@ -102,7 +102,7 @@ export default function ChallengesAdminPage() {
 
     setDeletingId(id)
     try {
-      demoStore.challenges.delete(id)
+      await demoStore.challenges.delete(id)
       toast.success("Challenge deleted successfully!")
       mutate("challenges")
     } catch (err) {
